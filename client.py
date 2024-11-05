@@ -1,14 +1,36 @@
-import asyncio
-import websockets
+import socketio
 
-async def send_message():
-    uri = "ws://localhost:8765"
-    async with websockets.connect(uri) as websocket:
-        message = "Hello, WebSocket!"
-        await websocket.send(message)
-        print(f"Sent message: {message}")
+# Socket.IOクライアントのインスタンスを作成
+sio = socketio.Client()
 
-        response = await websocket.recv()
-        print(f"Received response: {response}")
+# 接続時のイベント
+@sio.event
+def connect():
+    print("Connected to server")
 
-asyncio.run(send_message())
+# メッセージを受信したときのイベント
+@sio.event
+def response(data):
+    print('Received response:', data)
+
+# 切断時のイベント
+@sio.event
+def disconnect():
+    print("Disconnected from server")
+
+def main():
+    # サーバーに接続
+    sio.connect('http://127.0.0.1:5000')
+
+    # メッセージを送信
+    while True:
+        message = input("Enter message to send (or 'exit' to quit): ")
+        if message.lower() == 'exit':
+            break
+        sio.emit('message', message)
+
+    # 接続を切断
+    sio.disconnect()
+
+if __name__ == '__main__':
+    main()

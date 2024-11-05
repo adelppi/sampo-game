@@ -1,15 +1,19 @@
-import asyncio
-import websockets
+from flask import Flask, render_template
+from flask_socketio import SocketIO, emit
 
-async def echo(websocket, path):
-    async for message in websocket:
-        print(f"Received message: {message}")
-        await websocket.send(f"Echo: {message}")
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'your_secret_key'
+socketio = SocketIO(app)
 
-# WebSocketサーバーを起動
-async def main():
-    async with websockets.serve(echo, "localhost", 8765):
-        print("WebSocket server started at ws://localhost:8765")
-        await asyncio.Future()  # 永久に実行するため
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-asyncio.run(main())
+# イベントリスナーの例
+@socketio.on('message')
+def handle_message(message):
+    print('Received message:', message)
+    emit('response', {'data': 'Message received!'})  # クライアントに応答を送信
+
+if __name__ == '__main__':
+    socketio.run(app)
