@@ -5,6 +5,8 @@ import curses
 # Socket.IOクライアントのインスタンスを作成
 sio = socketio.Client()
 
+player_name = ""
+
 
 # 接続時のイベント
 @sio.event
@@ -39,7 +41,8 @@ def main(stdscr):
             case _:
                 continue
 
-        sio.emit("move", dir)
+        data = {"player_name": player_name, "dir": dir}
+        sio.emit("move", data)
 
 
 if __name__ == "__main__":
