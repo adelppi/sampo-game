@@ -19,11 +19,11 @@ class Player:
 
     @property
     def pos(self):
-        return (self.x, self.y)
+        return np.array([self.x, self.y])
 
-    @pos.setter
-    def pos(self, new_pos):
-        self.pos = new_pos
+    def set(self, pos):
+        self.x = pos[0]
+        self.y = pos[1]
 
 
 class Game:
@@ -32,10 +32,28 @@ class Game:
         self.player_map = Map(width=width, height=height)
         self.players = {}
 
-    def add_player(self, name, initial_x, initial_y):
-        new_player = Player(name, initial_x, initial_y)
+    def add_player(self, name, initial_pos):
+        new_player = Player(name, initial_pos[0], initial_pos[1])
         self.players[name] = new_player
         self.place_player(new_player.pos)
+
+    def move_player(self, name, dir):
+        player = self.players[name]
+        self.player_map.set(player.pos, 0)
+
+        def movement(d):
+            match d:
+                case "w":
+                    return [0, -1]
+                case "a":
+                    return [-1, 0]
+                case "s":
+                    return [0, 1]
+                case "d":
+                    return [1, 0]
+
+        player.set(player.pos + np.array(movement(dir)))
+        self.player_map.set(player.pos, 1)
 
     def place_object(self, pos, object):
         self.field.set(pos, object)
@@ -58,8 +76,12 @@ if __name__ == "__main__":
         game.place_object((i, 2), 1)
         game.place_object((i, 7), 1)
 
-    game.add_player("adi", 3, 5)
-    game.add_player("mio", 6, 5)
+    game.add_player("adi", (3, 5))
+    game.add_player("mio", (6, 5))
 
     game.print_field()
-    print(game.players)
+    # print(game.players)
+
+    game.move_player("adi", "w")
+    game.move_player("adi", "a")
+    game.print_field()
