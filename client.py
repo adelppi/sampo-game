@@ -1,5 +1,6 @@
 import socketio
 import time
+import curses
 
 # Socket.IOクライアントのインスタンスを作成
 sio = socketio.Client()
@@ -23,25 +24,42 @@ def response(data):
     print("Received response:", data["msg"])
 
 
-def main():
+def main(stdscr):
+
+    while True:
+        match stdscr.getch():
+            case 119:
+                dir = "w"
+            case 97:
+                dir = "a"
+            case 115:
+                dir = "s"
+            case 100:
+                dir = "d"
+            case _:
+                continue
+
+        sio.emit("move", dir)
+
+
+if __name__ == "__main__":
     try:
         # サーバーに接続
         sio.connect("http://127.0.0.1:5000")
-        
+
         # ユーザーからメッセージを入力
-        message = input("Enter message: ")
-        sio.emit("message", message)
-        
+        player_name = input("プレイヤー名を入力: ")
+        sio.emit("join", player_name)
+
         # レスポンスを待つため少し待機
         time.sleep(1)
-        
+
+        curses.wrapper(main)
+
     except Exception as e:
         print(f"Error occurred: {e}")
-    
+
     finally:
         # 接続を切断
         if sio.connected:
             sio.disconnect()
-
-if __name__ == "__main__":
-    main()

@@ -38,9 +38,6 @@ class Game:
         self.place_player(new_player.pos)
 
     def move_player(self, name, dir):
-        player = self.players[name]
-        self.player_map.set(player.pos, 0)
-
         def movement(d):
             match d:
                 case "w":
@@ -52,6 +49,8 @@ class Game:
                 case "d":
                     return [1, 0]
 
+        player = self.players[name]
+        self.player_map.set(player.pos, 0)
         player.set(player.pos + np.array(movement(dir)))
         self.player_map.set(player.pos, 1)
 
@@ -60,6 +59,9 @@ class Game:
 
     def place_player(self, pos):
         self.player_map.set(pos, 1)
+
+    def compile_layers(self):
+        compiled_layer
 
     def print_field(self):
         print("Field:")
@@ -84,4 +86,5 @@ if __name__ == "__main__":
 
     game.move_player("adi", "w")
     game.move_player("adi", "a")
+    game.move_player("mio", "a")
     game.print_field()
