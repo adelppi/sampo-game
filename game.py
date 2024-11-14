@@ -65,10 +65,19 @@ class Game:
                     return [0, 1]
                 case "d":
                     return [1, 0]
+                case _:
+                    return [0, 0]
 
         player = self.players[name]
         self.player_map.set(player.pos, 0)
-        player.set(player.pos + np.array(movement(dir)))
+        new_pos = player.pos + np.array(movement(dir))
+
+        if 0 <= new_pos[0] < self.field.width and 0 <= new_pos[1] < self.field.height:
+            player.set(new_pos)
+            self.player_map.set(player.pos, 1)
+
+            return
+
         self.player_map.set(player.pos, 1)
 
     def place_object(self, pos, object):

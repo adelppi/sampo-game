@@ -1,11 +1,13 @@
 import socketio
 import time
 import curses
+import numpy as np
 
 # Socket.IOクライアントのインスタンスを作成
 sio = socketio.Client()
 
 player_name = ""
+stdscr = None  # グローバル変数として stdscr を宣言
 
 
 # 接続時のイベント
@@ -23,10 +25,20 @@ def disconnect():
 # メッセージを受信したときのイベント
 @sio.event
 def response(data):
-    print("Received response:", data["msg"])
+    global stdscr  # stdscr をグローバル変数として使用
+    field = data["map"]
+    if stdscr:
+        for i, row in enumerate(field):
+            for j, cell in enumerate(row):
+                stdscr.addstr(i, j, "#" if cell == 1 else " ")
+        # stdscr.refresh()
+    else:
+        print("Received response:", data)
 
 
-def main(stdscr):
+def main(stdscr_main):
+    global stdscr
+    stdscr = stdscr_main  # main 関数の stdscr をグローバル変数に代入
 
     while True:
         match stdscr.getch():

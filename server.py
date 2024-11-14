@@ -23,9 +23,10 @@ def move(data):
 
     print(f"movement received: {dir}")
     game.move_player(player_name, dir)
-    game.print_field()
-    print(game.players)
-    emit("response", {"msg": f"movement received: {dir}"})  # クライアントに応答を送信
+    print(game.player_map.array)
+    emit(
+        "response", {"map": game.player_map.array.tolist()}
+    )  # クライアントに応答を送信
 
 
 @socketio.on("join")
