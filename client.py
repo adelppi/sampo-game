@@ -24,36 +24,25 @@ def disconnect():
 
 # メッセージを受信したときのイベント
 @sio.event
-def response(data):
-    global stdscr  # stdscr をグローバル変数として使用
+def response(data: any):
+    global stdscr
     field = data["map"]
     if stdscr:
+        stdscr.clear()
         for i, row in enumerate(field):
             for j, cell in enumerate(row):
-                stdscr.addstr(i, j, "#" if cell == 1 else " ")
-        # stdscr.refresh()
+                stdscr.addstr(i, j, "😀" if cell == 1 else "🌳")
+        stdscr.refresh()
     else:
         print("Received response:", data)
 
 
 def main(stdscr_main):
     global stdscr
-    stdscr = stdscr_main  # main 関数の stdscr をグローバル変数に代入
+    stdscr = stdscr_main
 
     while True:
-        match stdscr.getch():
-            case 119:
-                dir = "w"
-            case 97:
-                dir = "a"
-            case 115:
-                dir = "s"
-            case 100:
-                dir = "d"
-            case _:
-                continue
-
-        data = {"player_name": player_name, "dir": dir}
+        data = {"player_name": player_name, "dir": chr(stdscr.getch())}
         sio.emit("move", data)
 
 
