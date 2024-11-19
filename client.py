@@ -49,7 +49,7 @@ def main(stdscr_main):
 if __name__ == "__main__":
     try:
         # サーバーに接続
-        sio.connect("http://127.0.0.1:5000")
+        sio.connect("http://172.16.37.119:3000")
 
         # ユーザーからメッセージを入力
         player_name = input("プレイヤー名を入力: ")

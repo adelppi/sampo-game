@@ -8,7 +8,7 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=10, height=10)
+game = Game(width=25, height=25)
 
 
 @app.route("/")
@@ -34,4 +34,4 @@ def join(player_name):
 
 
 if __name__ == "__main__":
-    socketio.run(app)
+    socketio.run(app, host="0.0.0.0", port=3000) 
