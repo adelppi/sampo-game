@@ -28,7 +28,7 @@ def disconnect():
 def response(data: any):
     global stdscr
     field = data["map"]
-    if player_name=="":
+    if player_name == "":
         return
     if stdscr:
         stdscr.clear()
@@ -38,6 +38,7 @@ def response(data: any):
                 char = "😀" if cell == 1 else "🌳"
                 stdscr.addstr(i, col, char)
                 col += wcwidth.wcwidth(char)  # 文字の幅を考慮して位置を更新
+        stdscr.refresh()
     else:
         print("Received response:", data)
 
@@ -54,7 +55,7 @@ def main(stdscr_main):
 if __name__ == "__main__":
     try:
         # サーバーに接続
-        sio.connect("http://172.16.37.119:3000")
+        sio.connect("http://127.0.0.1:3000")
 
         # ユーザーからメッセージを入力
         player_name = input("プレイヤー名を入力: ")
