@@ -2,6 +2,7 @@ import socketio
 import time
 import curses
 import numpy as np
+import wcwidth
 
 # Socket.IOクライアントのインスタンスを作成
 sio = socketio.Client()
@@ -27,12 +28,16 @@ def disconnect():
 def response(data: any):
     global stdscr
     field = data["map"]
+    if player_name=="":
+        return
     if stdscr:
         stdscr.clear()
         for i, row in enumerate(field):
-            for j, cell in enumerate(row):
-                stdscr.addstr(i, j, "😀" if cell == 1 else "🌳")
-        stdscr.refresh()
+            col = 0
+            for cell in row:
+                char = "😀" if cell == 1 else "🌳"
+                stdscr.addstr(i, col, char)
+                col += wcwidth.wcwidth(char)  # 文字の幅を考慮して位置を更新
     else:
         print("Received response:", data)
 
@@ -49,7 +54,7 @@ def main(stdscr_main):
 if __name__ == "__main__":
     try:
         # サーバーに接続
-        sio.connect("http://127.0.0.1:5000")
+        sio.connect("http://172.16.37.119:3000/")
 
         # ユーザーからメッセージを入力
         player_name = input("プレイヤー名を入力: ")
