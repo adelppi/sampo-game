@@ -35,6 +35,8 @@ def response(data: any):
                 return "🌳"
             case 1:
                 return "🗿"
+            case 2:
+                return "🌊"
             case _:
                 return "🌳"
 

@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.ndimage import binary_dilation
 
 
 class Map:
@@ -91,6 +92,18 @@ class Game:
 
         self.player_map.set(player.pos, 1)
 
+    def place_pond_random(self, frequency):
+        pond_array = np.zeros(dtype=int, shape=(self.field.height, self.field.width))
+
+        indices = np.random.randint(
+            0, self.field.height * self.field.width, size=frequency
+        )
+        pond_array.ravel()[indices] = 1
+        dilated_pond_array = binary_dilation(
+            pond_array, structure=np.ones((2, 2), dtype=int)
+        )
+        self.field.array = np.where(dilated_pond_array, 2, self.field.array)
+
     def place_object(self, pos, object):
         """
         指定したposにオブジェクトを置く
@@ -124,7 +137,7 @@ class Game:
 if __name__ == "__main__":
 
     game = Game(width=10, height=10)
-
+    game.place_pond_random(10)
     for i in range(1, 9):
         game.place_object((i, 2), 1)
         game.place_object((i, 7), 1)

@@ -8,8 +8,11 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=10, height=10)
-for i in range(1, 9):
+game = Game(width=25, height=25)
+
+game.place_pond_random(20)
+
+for i in range(1, 25):
     game.place_object((i, 2), 1)
     game.place_object((i, 7), 1)
 
