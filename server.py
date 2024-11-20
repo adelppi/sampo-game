@@ -8,7 +8,10 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=25, height=25)
+game = Game(width=10, height=10)
+for i in range(1, 9):
+    game.place_object((i, 2), 1)
+    game.place_object((i, 7), 1)
 
 
 @app.route("/")
@@ -24,7 +27,14 @@ def move(data):
     print(f"player: {player_name}, dir: {dir}")
     game.move_player(player_name, dir)
     print(game.player_map.array)
-    emit("response", {"map": game.player_map.array.tolist()}, broadcast=True)
+    emit(
+        "response",
+        {
+            "player_map": game.player_map.array.tolist(),
+            "field": game.field.array.tolist(),
+        },
+        broadcast=True,
+    )
 
 
 @socketio.on("join")
@@ -34,4 +44,4 @@ def join(player_name):
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=3000) 
+    socketio.run(app, host="0.0.0.0", port=3000, debug=True)

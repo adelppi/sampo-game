@@ -26,16 +26,29 @@ def disconnect():
 # メッセージを受信したときのイベント
 @sio.event
 def response(data: any):
+
+    def select_char(player_cell, field_cell):
+        if player_cell == 1:
+            return "😀"
+        match field_cell:
+            case 0:
+                return "🌳"
+            case 1:
+                return "🗿"
+            case _:
+                return "🌳"
+
     global stdscr
-    field = data["map"]
+    player_map = data["player_map"]
+    field = data["field"]
     if player_name == "":
         return
     if stdscr:
         stdscr.clear()
-        for i, row in enumerate(field):
+        for i, row in enumerate(zip(player_map, field)):
             col = 0
-            for cell in row:
-                char = "😀" if cell == 1 else "🌳"
+            for cell in zip(*row):
+                char = select_char(*cell)
                 stdscr.addstr(i, col, char)
                 col += wcwidth.wcwidth(char)  # 文字の幅を考慮して位置を更新
         stdscr.refresh()

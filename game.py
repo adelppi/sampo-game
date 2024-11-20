@@ -50,6 +50,17 @@ class Game:
         self.players[name] = new_player
         self.place_player(new_player.pos)
 
+    def is_movable(self, pos):
+        """
+        posの位置にプレイヤーが移動できるか
+        """
+        x, y = pos
+        return (
+            0 <= x < self.field.width
+            and 0 <= y < self.field.height
+            and self.field.array[y][x] == 0
+        )
+
     def move_player(self, name, dir):
         """
         w, a, s, dをdirとして受け取って、指定したPlayerをその方向に動かす
@@ -72,7 +83,7 @@ class Game:
         self.player_map.set(player.pos, 0)
         new_pos = player.pos + np.array(movement(dir))
 
-        if 0 <= new_pos[0] < self.field.width and 0 <= new_pos[1] < self.field.height:
+        if self.is_movable(new_pos):
             player.set(new_pos)
             self.player_map.set(player.pos, 1)
 
@@ -99,13 +110,6 @@ class Game:
         """
         self.player_map.set(self.players[name].pos, 0)
         del self.players[name]
-
-    def compile_layers(self):
-        """
-        クライアントに送るMap配列(fieldとplayer_mapを合わせたもの)
-        を生成する
-        """
-        compiled_layer
 
     def print_field(self):
         """
