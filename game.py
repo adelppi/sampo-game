@@ -1,5 +1,6 @@
 import numpy as np
 from scipy.ndimage import binary_dilation
+from maze_generate import Maze
 
 
 class Map:
@@ -59,7 +60,7 @@ class Game:
         return (
             0 <= x < self.field.width
             and 0 <= y < self.field.height
-            and self.field.array[y][x] == 0
+            and self.field.array[y][x] != 1
         )
 
     def move_player(self, name, dir):
@@ -88,6 +89,10 @@ class Game:
             player.set(new_pos)
             self.player_map.set(player.pos, 1)
 
+            # if self.field.array[new_pos[1], new_pos[0]] == 2:
+            #     print("goal")
+            #     self.delete_player(name)
+
             return
 
         self.player_map.set(player.pos, 1)
@@ -103,6 +108,17 @@ class Game:
             pond_array, structure=np.ones((2, 2), dtype=int)
         )
         self.field.array = np.where(dilated_pond_array, 2, self.field.array)
+
+    def generate_maze(self):
+        """
+        フィールドを迷路化する
+        全ての値が迷路に上書きされる
+        """
+        maze = Maze(
+            width=self.field.width, height=self.field.height, def_pos_y=1, def_pos_x=1
+        )
+        maze.main()
+        self.field.array = np.array(maze.array)
 
     def place_object(self, pos, object):
         """
@@ -136,23 +152,13 @@ class Game:
 
 if __name__ == "__main__":
 
-    game = Game(width=10, height=10)
-    game.place_pond_random(10)
-    for i in range(1, 9):
-        game.place_object((i, 2), 1)
-        game.place_object((i, 7), 1)
+    game = Game(width=25, height=25)
 
-    game.add_player("adi", (3, 5))
-    game.add_player("mio", (6, 5))
+    # game.place_pond_random(10)
+    # for i in range(1, 9):
+    #     game.place_object((i, 2), 1)
+    #     game.place_object((i, 7), 1)
+
+    game.generate_maze()
 
     game.print_field()
-    print(game.players)
-
-    game.move_player("adi", "w")
-    game.move_player("adi", "a")
-    game.move_player("mio", "a")
-    game.print_field()
-
-    game.delete_player("mio")
-    game.print_field()
-    print(game.players)

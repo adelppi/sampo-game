@@ -8,13 +8,8 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=25, height=25)
-
-game.place_pond_random(20)
-
-for i in range(1, 25):
-    game.place_object((i, 2), 1)
-    game.place_object((i, 7), 1)
+game = Game(width=26, height=26)
+game.generate_maze()
 
 
 @app.route("/")
@@ -27,9 +22,16 @@ def move(data):
     dir = data["dir"]
     player_name = data["player_name"]
 
-    print(f"player: {player_name}, dir: {dir}")
+    # print(f"player: {player_name}, dir: {dir}")
     game.move_player(player_name, dir)
-    print(game.player_map.array)
+    # print(game.player_map.array)
+
+    player_pos = game.players[player_name].pos
+
+    if game.field.array[player_pos[1], player_pos[0]] == 2:
+        game.delete_player()
+        print(player_name, "ゴール!!!!!!!!")
+
     emit(
         "response",
         {
@@ -42,9 +44,10 @@ def move(data):
 
 @socketio.on("join")
 def join(player_name):
-    game.add_player(player_name, (random.randint(0, 9), random.randint(0, 9)))
-    game.print_field()
+    # game.add_player(player_name, (random.randint(0, 9), random.randint(0, 9)))
+    game.add_player(player_name, (1, 1))
+    # game.print_field()
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=3000, debug=True)
+    socketio.run(app, host="0.0.0.0", port=2500, debug=True)
