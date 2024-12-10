@@ -8,7 +8,7 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=10, height=10)
+game = Game(width=41, height=25)
 game.generate_maze()
 
 
@@ -56,7 +56,7 @@ def move(data):
 def join(player_name):
     # game.add_player(player_name, (random.randint(0, 9), random.randint(0, 9)))
     game.add_player(player_name, (1, 1))
-    # game.print_field()
+    game.print_field()
 
 
 if __name__ == "__main__":

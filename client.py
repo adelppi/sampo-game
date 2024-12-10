@@ -33,11 +33,11 @@ def response(data: any):
             return "😀"
         match field_cell:
             case 0:
-                return "🌳"
+                return "　"
             case 1:
                 return "🗿"
             case 2:
-                return "🌊"
+                return "🎉"
             case _:
                 return "🌳"
 
@@ -53,7 +53,8 @@ def response(data: any):
             for cell in zip(*row):
                 char = select_char(*cell)
                 if last_goal_player:
-                    stdscr.addstr(1, 1, f"{last_goal_player}がゴールしました！！")
+                    stdscr.addstr(1, 2, f"{last_goal_player}がゴールしました！！")
+                stdscr.bkgd(" ", curses.color_pair(1) | curses.A_BOLD)
                 stdscr.addstr(i + 2, col + 2, char)
                 col += wcwidth.wcwidth(char)  # 文字の幅を考慮して位置を更新
         stdscr.refresh()
@@ -78,6 +79,7 @@ def main(stdscr_main):
     global stdscr
     stdscr = stdscr_main
 
+    curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN)
     while True:
         data = {"player_name": player_name, "dir": chr(stdscr.getch())}
         sio.emit("move", data)
