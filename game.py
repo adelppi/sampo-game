@@ -115,7 +115,7 @@ class Game:
         全ての値が迷路に上書きされる
         """
         maze = Maze(
-            width=self.field.width, height=self.field.height, def_pos_y=1, def_pos_x=1
+            width=self.field.width, height=self.field.height, def_pos_y=13, def_pos_x=12
         )
         maze.main()
         self.field.array = np.array(maze.array)

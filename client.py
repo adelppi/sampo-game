@@ -33,7 +33,7 @@ def response(data: any):
             return "😀"
         match field_cell:
             case 0:
-                return "　"
+                return "🌳"
             case 1:
                 return "🗿"
             case 2:
