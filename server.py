@@ -8,19 +8,24 @@ import random
 app = Flask(__name__)
 socketio = SocketIO(app)
 
-game = Game(width=26, height=26)
+game = Game(width=10, height=10)
 game.generate_maze()
 
 
 @app.route("/")
 def index():
-    return {"statue": "online"}
+    return {"status": "online"}
 
 
 @socketio.on("move")
 def move(data):
+
     dir = data["dir"]
     player_name = data["player_name"]
+
+    # すでにクリアしたプレイヤーからきた命令は無視する
+    if player_name not in game.players.keys():
+        return
 
     # print(f"player: {player_name}, dir: {dir}")
     game.move_player(player_name, dir)
@@ -29,8 +34,13 @@ def move(data):
     player_pos = game.players[player_name].pos
 
     if game.field.array[player_pos[1], player_pos[0]] == 2:
-        game.delete_player()
+        game.delete_player(name=player_name)
         print(player_name, "ゴール!!!!!!!!")
+        emit(
+            "goal",
+            player_name,
+            broadcast=True,
+        )
 
     emit(
         "response",

@@ -9,6 +9,7 @@ sio = socketio.Client()
 
 player_name = ""
 stdscr = None  # グローバル変数として stdscr を宣言
+last_goal_player = None
 
 
 # 接続時のイベント
@@ -40,7 +41,7 @@ def response(data: any):
             case _:
                 return "🌳"
 
-    global stdscr
+    global stdscr, last_goal_player
     player_map = data["player_map"]
     field = data["field"]
     if player_name == "":
@@ -51,11 +52,26 @@ def response(data: any):
             col = 0
             for cell in zip(*row):
                 char = select_char(*cell)
-                stdscr.addstr(i, col, char)
+                if last_goal_player:
+                    stdscr.addstr(1, 1, f"{last_goal_player}がゴールしました！！")
+                stdscr.addstr(i + 2, col + 2, char)
                 col += wcwidth.wcwidth(char)  # 文字の幅を考慮して位置を更新
         stdscr.refresh()
     else:
         print("Received response:", data)
+
+
+@sio.event
+def goal(name):
+    global last_goal_player
+    last_goal_player = name
+    # global stdscr
+    # if stdscr:
+    #     stdscr.clear()  # 画面をクリア
+    #     stdscr.addstr(15, 15, f"{name}がゴールしました！！")
+    #     stdscr.refresh()  # 描画を更新
+
+    # print(name)
 
 
 def main(stdscr_main):
@@ -70,7 +86,7 @@ def main(stdscr_main):
 if __name__ == "__main__":
     try:
         # サーバーに接続
-        sio.connect("http://127.0.0.1:3000")
+        sio.connect("http://127.0.0.1:2500")
 
         # ユーザーからメッセージを入力
         player_name = input("プレイヤー名を入力: ")
